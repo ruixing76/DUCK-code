@@ -169,7 +169,7 @@ class DUCK:
 			batch_idx = 0
 			tqdm_train_loader = tqdm(train_loader)
 			for Batch_data in tqdm_train_loader:
-				ipdb.set_trace()
+				#ipdb.set_trace()
 				Batch_data.to(device)
 				dataList = Batch_data.to_data_list()
 				#emb, out_labels = model(Batch_data)
@@ -206,23 +206,23 @@ class DUCK:
 			for Batch_data in tqdm_test_loader:
 				optimizer.zero_grad()
 				Batch_data.to(device)
-				val_emb,val_out = model(Batch_data)
-				val_loss  = F.nll_loss(val_out, Batch_data.y)
+				#val_emb, val_out = model(Batch_data)
+				val_out = model(Batch_data)
+				val_loss = F.nll_loss(val_out, Batch_data.y)
 				temp_val_losses.append(val_loss.item())
+				
 				_, val_pred = val_out.max(dim=1)
 				correct = val_pred.eq(Batch_data.y).sum().item()
 				val_acc = correct / len(Batch_data.y)
-				Acc_all, Acc1, Prec1, Recll1, F1, Acc2, Prec2, Recll2, F2, Acc3, Prec3, Recll3, F3, Acc4, Prec4, Recll4, F4 = evaluationRumour4(
-					val_pred, Batch_data.y)
-				temp_val_Acc_all.append(Acc_all), temp_val_Acc1.append(Acc1), temp_val_Prec1.append(
-					Prec1), temp_val_Recll1.append(Recll1), temp_val_F1.append(F1), \
-				temp_val_Acc2.append(Acc2), temp_val_Prec2.append(Prec2), temp_val_Recll2.append(
-					Recll2), temp_val_F2.append(F2), \
-				temp_val_Acc3.append(Acc3), temp_val_Prec3.append(Prec3), temp_val_Recll3.append(
-					Recll3), temp_val_F3.append(F3), \
-				temp_val_Acc4.append(Acc4), temp_val_Prec4.append(Prec4), temp_val_Recll4.append(
-					Recll4), temp_val_F4.append(F4)
+				Acc_all, Acc1, Prec1, Recll1, F1, Acc2, Prec2, Recll2, F2, Acc3, Prec3, Recll3, F3, Acc4, Prec4, Recll4, F4 = evaluationRumour4(val_pred, Batch_data.y)
+				
+				temp_val_Acc_all.append(Acc_all)
+				temp_val_Acc1.append(Acc1), temp_val_Prec1.append(Prec1), temp_val_Recll1.append(Recll1), temp_val_F1.append(F1), \
+				temp_val_Acc2.append(Acc2), temp_val_Prec2.append(Prec2), temp_val_Recll2.append(Recll2), temp_val_F2.append(F2), \
+				temp_val_Acc3.append(Acc3), temp_val_Prec3.append(Prec3), temp_val_Recll3.append(Recll3), temp_val_F3.append(F3), \
+				temp_val_Acc4.append(Acc4), temp_val_Prec4.append(Prec4), temp_val_Recll4.append(Recll4), temp_val_F4.append(F4)
 				temp_val_accs.append(val_acc)
+
 			val_losses.append(np.mean(temp_val_losses))
 			val_accs.append(np.mean(temp_val_accs))
 			print("Epoch {:05d} | Val_Loss {:.4f}| Val_Accuracy {:.4f}".format(epoch, np.mean(temp_val_losses),np.mean(temp_val_accs)))
