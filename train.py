@@ -242,7 +242,7 @@ class DUCK:
 			print('results:', res)
 			logger.info(f'results: {res}')
 			early_stopping(np.mean(temp_val_losses), np.mean(temp_val_accs), np.mean(temp_val_F1), np.mean(temp_val_F2),
-						   np.mean(temp_val_F3), np.mean(temp_val_F4), model, self.args.modelName, self.args.datasetName + self.args.foldnum)
+						   np.mean(temp_val_F3), np.mean(temp_val_F4), model, self.args.modelName, "{}{}".format(self.args.datasetName, self.args.foldnum))
 			
 			accs = np.mean(temp_val_accs)
 			F1 = np.mean(temp_val_F1)
