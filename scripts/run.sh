@@ -42,7 +42,9 @@ do
 			--foldnum $fold \
 			--mode CommentTree \
 			--modelName Simple_GAT_BERT \
-			--batchsize $batch_size
+			--batchsize $batch_size \
+			--learningRate 2e-5 \
+			--learningRateGraph 2e-4
 		
 		## CCCT (Comment Chain + Comment Tree)
 		#python train.py \

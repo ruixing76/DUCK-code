@@ -32,9 +32,11 @@ class SimpleGAT_BERT(nn.Module):
 
 		x, edge_index = last_hidden_state_cls, data.edge_index
 		#print('*******************After  x.shape', x.shape)
-		x = F.dropout(x, p=0.6, training=self.training)
+		#x = F.dropout(x, p=0.6, training=self.training)
+		x = F.dropout(x, p=0.5, training=self.training)
 		x = F.elu(self.conv1(x, edge_index))
-		x = F.dropout(x, p=0.6, training=self.training)
+		#x = F.dropout(x, p=0.6, training=self.training)
+		x = F.dropout(x, p=0.5, training=self.training)
 		x = self.conv2(x, edge_index)
 		if self.pooling == 'scatter_mean':
 			x = scatter_mean(x,data.batch,dim=0)
@@ -77,7 +79,7 @@ class SimpleGATBERTNet(nn.Module):
 		super(SimpleGATBERTNet, self).__init__()
 		self.pooling = pooling
 		#D_in, H = 768,32,4
-		self.gnn = SimpleGAT_BERT(in_feats=D_in, hid_feats=hid_feats, out_feats=out_feats, n_heads=8, gat_dropout=0.6, pooling=pooling)
+		self.gnn = SimpleGAT_BERT(in_feats=D_in, hid_feats=hid_feats, out_feats=out_feats, n_heads=8, gat_dropout=0.5, pooling=pooling)
 		#self.gnn = SimpleGAT_BERT(D_in, hid_feats, out_feats, pooling, n_heads=8)
 
 		if (self.pooling == 'mean_max') or (self.pooling == 'scatter_mean_max'):
