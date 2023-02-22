@@ -170,7 +170,7 @@ class DUCK:
 			avg_loss = []
 			avg_acc = []
 			batch_idx = 0
-			tqdm_train_loader = tqdm(train_loader, desc="Train")
+			tqdm_train_loader = tqdm(train_loader, desc="Epoch: {}, Train".format(epoch))
 			for Batch_data in tqdm_train_loader:
 				#ipdb.set_trace()
 				Batch_data.to(device)
@@ -206,7 +206,7 @@ class DUCK:
 			temp_val_Acc2, temp_val_Prec2, temp_val_Recll2, temp_val_F2, \
 			temp_val_Acc3, temp_val_Prec3, temp_val_Recll3, temp_val_F3, \
 			temp_val_Acc4, temp_val_Prec4, temp_val_Recll4, temp_val_F4 = [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
-			tqdm_test_loader = tqdm(test_loader, desc="Eval")
+			tqdm_test_loader = tqdm(test_loader, desc="Epoch: {}, Eval".format(epoch))
 			for Batch_data in tqdm_test_loader:
 				optimizer.zero_grad()
 				Batch_data.to(device)
@@ -229,7 +229,7 @@ class DUCK:
 
 			val_losses.append(np.mean(temp_val_losses))
 			val_accs.append(np.mean(temp_val_accs))
-			print("Epoch {:05d} | Val_Loss {:.4f}| Val_Accuracy {:.4f}".format(epoch, np.mean(temp_val_losses),np.mean(temp_val_accs)))
+			print("Epoch {:05d} | Val_Loss {:.4f} | Val_Accuracy {:.4f}".format(epoch, np.mean(temp_val_losses),np.mean(temp_val_accs)))
 			temp_mean_val_losses = np.mean(temp_val_losses)
 			temp_mean_val_accs = np.mean(temp_val_accs)
 			logger.info(f"epoch {epoch}, {temp_mean_val_losses},{temp_mean_val_accs}")
@@ -239,7 +239,9 @@ class DUCK:
 				   "C2:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc2), np.mean(temp_val_Prec2), np.mean(temp_val_Recll2), np.mean(temp_val_F2)),
 				   "C3:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc3), np.mean(temp_val_Prec3), np.mean(temp_val_Recll3), np.mean(temp_val_F3)),
 				   "C4:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc4), np.mean(temp_val_Prec4), np.mean(temp_val_Recll4), np.mean(temp_val_F4))]
-			print('results:', res)
+			#print('results:', res)
+			for res_ in res:
+				print(res_)
 			logger.info(f'results: {res}')
 			early_stopping(np.mean(temp_val_losses), np.mean(temp_val_accs), np.mean(temp_val_F1), np.mean(temp_val_F2),
 						   np.mean(temp_val_F3), np.mean(temp_val_F4), model, self.args.modelName, "{}{}".format(self.args.datasetName, self.args.foldnum))
