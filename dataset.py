@@ -61,14 +61,14 @@ class CommentTreeDataset(Dataset):
 
 	def __getitem__(self, index):
 		id = str(self.fold_x[index])
-		
+
 		#data = np.load(os.path.join(self.data_path, id + ".npz"), allow_pickle=True)
 		#idx = int(id)
 		#str_idx = str(idx)
 		data = np.load("{}/{}.npz".format(self.graph_path, id), allow_pickle=True)
 		input_ids    , attention_mask     = preprocessing_for_bert_latest(data["root"], data["nodecontent"]) #convert list of strings to list of input_ids and attention_mask for this idx
 		input_ids_seq, attention_mask_seq = preprocessing_for_bert_seq(   data["root"], data["nodecontent"])
-		
+
 		return Data(
 			edge_index = torch.LongTensor(data["edgematrix"]),
 			#root = torch.LongTensor(data["root"]),

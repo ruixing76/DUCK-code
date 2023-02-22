@@ -24,6 +24,7 @@ from torch_scatter import scatter_mean, scatter_max, scatter_add
 
 from utils import *
 from utils import EarlyStopping
+from model.duck import CCCTNet
 from model.duck import ComboNet
 from model.gat import SimpleGATNet
 from model.gcn import SimpleGCNNet, TripleGCNNet
@@ -90,6 +91,7 @@ class DUCK:
 			#"Triple_GCN": TripleGCNNet(),
 			#"Simple_GAT": SimpleGATNet(),
 			"Simple_GAT_BERT": SimpleGATBERTNet(D_in=768, hid_feats=768, out_feats=768, H=32, D_out=self.args.n_classes),
+			"CCCTNet": CCCTNet(in_feats=768, hid_feats=768, out_feats=768, D_in=768, D_H=64, D_out=self.args.n_classes), 
 			#"Triple_GAT_BERT": TripleGATBERTNet(),
 			#"DUCK": ComboNet(),
 		}
@@ -167,6 +169,7 @@ class DUCK:
 			batch_idx = 0
 			tqdm_train_loader = tqdm(train_loader)
 			for Batch_data in tqdm_train_loader:
+				ipdb.set_trace()
 				Batch_data.to(device)
 				dataList = Batch_data.to_data_list()
 				#emb, out_labels = model(Batch_data)
