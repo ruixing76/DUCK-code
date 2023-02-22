@@ -425,18 +425,17 @@ class EarlyStopping:
 		self.F4 = 0
 		self.val_loss_min = np.Inf
 
-	def __call__(self, val_loss, acc,F1,F2,F3,F4,model,modelname,str):
-
+	def __call__(self, val_loss, acc, F1, F2, F3, F4, model, modelname, str):
 		score = -val_loss
 
 		if self.best_score is None:
 			self.best_score = score
-			self.accuracy = accs
+			self.accuracy = acc
 			self.F1 = F1
 			self.F2 = F2
 			self.F3 = F3
 			self.F4 = F4
-			self.save_checkpoint(val_loss, model,modelname,str)
+			#self.save_checkpoint(val_loss, model, modelname, str)
 		elif score < self.best_score:
 			self.counter += 1
 			if self.counter >= self.patience:
@@ -450,7 +449,7 @@ class EarlyStopping:
 			self.F2 = F2
 			self.F3 = F3
 			self.F4 = F4
-			self.save_checkpoint(val_loss, model,modelname,str)
+			#self.save_checkpoint(val_loss, model,modelname,str)
 			self.counter = 0
 
 	def save_checkpoint(self, val_loss, model,modelname,str):
