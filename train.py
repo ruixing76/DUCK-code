@@ -187,7 +187,7 @@ class DUCK:
 				train_acc = correct / len(Batch_data.y)
 				avg_acc.append(train_acc)
 
-				print("Epoch {:05d} | Batch{:02d} | Train_Loss {:.4f}| Train_Accuracy {:.4f}".format(epoch, batch_idx, loss.item(), train_acc))
+				#print("Epoch {:05d} | Batch{:02d} | Train_Loss {:.4f}| Train_Accuracy {:.4f}".format(epoch, batch_idx, loss.item(), train_acc))
 				logger.info("Epoch {:05d} | Batch{:02d} | Train_Loss {:.4f}| Train_Accuracy {:.4f}".format(epoch, batch_idx, loss.item(), train_acc))
 
 				batch_idx = batch_idx + 1
@@ -230,15 +230,11 @@ class DUCK:
 			temp_mean_val_accs = np.mean(temp_val_accs)
 			logger.info(f"epoch {epoch}, {temp_mean_val_losses},{temp_mean_val_accs}")
 
-			res = ['acc:{:.4f}'.format(np.mean(temp_val_Acc_all)),
-				   'C1:{:.4f},{:.4f},{:.4f},{:.4f}'.format(np.mean(temp_val_Acc1), np.mean(temp_val_Prec1),
-														   np.mean(temp_val_Recll1), np.mean(temp_val_F1)),
-				   'C2:{:.4f},{:.4f},{:.4f},{:.4f}'.format(np.mean(temp_val_Acc2), np.mean(temp_val_Prec2),
-														   np.mean(temp_val_Recll2), np.mean(temp_val_F2)),
-				   'C3:{:.4f},{:.4f},{:.4f},{:.4f}'.format(np.mean(temp_val_Acc3), np.mean(temp_val_Prec3),
-														   np.mean(temp_val_Recll3), np.mean(temp_val_F3)),
-				   'C4:{:.4f},{:.4f},{:.4f},{:.4f}'.format(np.mean(temp_val_Acc4), np.mean(temp_val_Prec4),
-														   np.mean(temp_val_Recll4), np.mean(temp_val_F4))]
+			res = ["acc:{:.4f}".format(np.mean(temp_val_Acc_all)),
+				   "C1:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc1), np.mean(temp_val_Prec1), np.mean(temp_val_Recll1), np.mean(temp_val_F1)),
+				   "C2:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc2), np.mean(temp_val_Prec2), np.mean(temp_val_Recll2), np.mean(temp_val_F2)),
+				   "C3:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc3), np.mean(temp_val_Prec3), np.mean(temp_val_Recll3), np.mean(temp_val_F3)),
+				   "C4:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc4), np.mean(temp_val_Prec4), np.mean(temp_val_Recll4), np.mean(temp_val_F4))]
 			print('results:', res)
 			logger.info(f'results: {res}')
 			early_stopping(np.mean(temp_val_losses), np.mean(temp_val_accs), np.mean(temp_val_F1), np.mean(temp_val_F2),
@@ -263,6 +259,7 @@ class DUCK:
 
 			logger.info(f"acc {accs}, F1 {F1} | F2 {F2} | F3 {F3} | F4 {F4} ")
 
+			## TODO: add recording best scores!
 
 	def run(self):
 		self.train()

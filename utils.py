@@ -418,8 +418,8 @@ class EarlyStopping:
 		self.counter = 0
 		self.best_score = None
 		self.early_stop = False
-		self.accs=0
-		self.F1=0
+		self.accs = 0
+		self.F1 = 0
 		self.F2 = 0
 		self.F3 = 0
 		self.F4 = 0
