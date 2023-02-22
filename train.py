@@ -150,8 +150,12 @@ class DUCK:
 				{"params": model.gnn.conv2.parameters(), "lr": self.glr},
 				{"params": model.gnn.conv3.parameters(), "lr": self.glr},
 			], lr=self.lr, weight_decay=self.weight_decay)
+
+		## Load dataset for training
+		traindata_list, testdata_list = self.loadData()
+		train_loader = DataLoader(traindata_list, batch_size=self.batchsize, shuffle=True, num_workers=0)#5)
+		test_loader  = DataLoader(testdata_list , batch_size=self.batchsize, shuffle=True, num_workers=0)#5)
 		
-		model.train()
 		train_losses = []
 		val_losses = []
 		train_accs = []
@@ -160,14 +164,13 @@ class DUCK:
 
 		print("\nStart training...")
 		for epoch in range(self.args.n_epochs):
-			traindata_list, testdata_list = self.loadData()
-			train_loader = DataLoader(traindata_list, batch_size=self.batchsize, shuffle=True, num_workers=0)#5)
-			test_loader  = DataLoader(testdata_list , batch_size=self.batchsize, shuffle=True, num_workers=0)#5)
 
+			## Training
+			model.train()
 			avg_loss = []
 			avg_acc = []
 			batch_idx = 0
-			tqdm_train_loader = tqdm(train_loader)
+			tqdm_train_loader = tqdm(train_loader, desc="Train")
 			for Batch_data in tqdm_train_loader:
 				#ipdb.set_trace()
 				Batch_data.to(device)
@@ -188,21 +191,22 @@ class DUCK:
 				avg_acc.append(train_acc)
 
 				#print("Epoch {:05d} | Batch{:02d} | Train_Loss {:.4f}| Train_Accuracy {:.4f}".format(epoch, batch_idx, loss.item(), train_acc))
-				logger.info("Epoch {:05d} | Batch{:02d} | Train_Loss {:.4f}| Train_Accuracy {:.4f}".format(epoch, batch_idx, loss.item(), train_acc))
+				#logger.info("Epoch {:05d} | Batch{:02d} | Train_Loss {:.4f}| Train_Accuracy {:.4f}".format(epoch, batch_idx, loss.item(), train_acc))
 
 				batch_idx = batch_idx + 1
 
 			train_losses.append(np.mean(avg_loss))
 			train_accs.append(np.mean(avg_acc))
 
+			## Evaluation
+			model.eval()
 			temp_val_losses = []
 			temp_val_accs = []
 			temp_val_Acc_all, temp_val_Acc1, temp_val_Prec1, temp_val_Recll1, temp_val_F1, \
 			temp_val_Acc2, temp_val_Prec2, temp_val_Recll2, temp_val_F2, \
 			temp_val_Acc3, temp_val_Prec3, temp_val_Recll3, temp_val_F3, \
 			temp_val_Acc4, temp_val_Prec4, temp_val_Recll4, temp_val_F4 = [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
-			model.eval()
-			tqdm_test_loader = tqdm(test_loader)
+			tqdm_test_loader = tqdm(test_loader, desc="Eval")
 			for Batch_data in tqdm_test_loader:
 				optimizer.zero_grad()
 				Batch_data.to(device)
