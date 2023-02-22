@@ -56,7 +56,7 @@ class SimpleGCN(nn.Module):
 
 
 class SimpleGCNNet(nn.Module):
-    def __init__(self,in_feats,hid_feats,out_feats,D_H, D_out,pooling='scatter_mean'):
+    def __init__(self, in_feats, hid_feats, out_feats, D_H, D_out, pooling='scatter_mean'):
         super(SimpleGCNNet, self).__init__()
         self.pooling = pooling
         self.gnn = SimpleGCN(in_feats,hid_feats,out_feats,pooling)

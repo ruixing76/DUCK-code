@@ -1,14 +1,13 @@
-import numpy as np
-import torch
-import pickle
-
-import networkx as nx
-import numpy as np
-from sklearn.metrics import roc_auc_score, average_precision_score, accuracy_score
-import matplotlib.pyplot as plt
-
-from transformers import BertTokenizer
 import re
+import ipdb
+import pickle
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_auc_score, average_precision_score, accuracy_score
+
+import torch
+from transformers import BertTokenizer
 
 # Load the BERT tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
@@ -135,14 +134,14 @@ def preprocessing_for_bert_combo(tweet_id):
 	return input_ids, attention_masks
 
 
-def preprocessing_for_bert_latest(root_node,node_content):
+def preprocessing_for_bert_latest(root_node, node_content):
 	# Create empty lists to store outputs
 	input_ids = []
 	attention_masks = []
 
 	node_lst = []
 	for node in node_content:
-	  node_lst.append(node)
+		node_lst.append(node)
 
 	whole_lst = []
 	whole_lst = root_node.tolist() + node_lst
@@ -154,18 +153,19 @@ def preprocessing_for_bert_latest(root_node,node_content):
 
 	for c in whole_lst:
 
-	  encoded_sent = tokenizer.encode_plus(
-				text=root_node[0],  # Preprocess sentence
-				text_pair= c,
-				add_special_tokens=True,        # Add `[CLS]` and `[SEP]`
-				max_length=MAX_LEN,                  # Max length to truncate/pad
-				pad_to_max_length=True,         # Pad sentence to max length
-				#return_tensors='pt',           # Return PyTorch tensor
-				return_attention_mask=True      # Return attention mask
-				)
-	  # Add the outputs to the lists
-	  input_ids.append(encoded_sent.get('input_ids'))
-	  attention_masks.append(encoded_sent.get('attention_mask'))
+		encoded_sent = tokenizer.encode_plus(
+			text=root_node[0],  # Preprocess sentence
+			text_pair= c,
+			add_special_tokens=True,        # Add `[CLS]` and `[SEP]`
+			max_length=MAX_LEN,                  # Max length to truncate/pad
+			pad_to_max_length=True,         # Pad sentence to max length
+			#return_tensors='pt',           # Return PyTorch tensor
+			return_attention_mask=True      # Return attention mask
+		)
+		# Add the outputs to the lists
+		input_ids.append(encoded_sent.get('input_ids'))
+		attention_masks.append(encoded_sent.get('attention_mask'))
+
 	#final_input_ids = np.array([input_ids])
 	#final_attention_masks = np.array([attention_masks])
 	# Convert lists to tensors
@@ -176,30 +176,30 @@ def preprocessing_for_bert_latest(root_node,node_content):
 
 
 def preprocessing_for_bert_seq(root_node,node_content):
-  input_ids = []
-  attention_masks = []
-
-  node_lst = []
-  for node in node_content:
-	node_lst.append(node)
-  print('len node_lst', node_lst)
-  print('type root_node ', type(root_node))
-  print('len root_node ', len(root_node))
-  print('rootnode[0] ', root_node[0])
-
-  MAX_LEN_SEQ = 384
-  encoded_sent = tokenizer.encode_plus(
-	  text = root_node[0],
-	  text_pair = root_node.tolist() + node_lst,
-	  add_special_tokens = True,
-	  max_length = MAX_LEN_SEQ,
-	  pad_to_max_length = True,
-	  return_attention_mask = True
-  )
-  input_ids = torch.tensor(encoded_sent.get('input_ids'))
-  attention_masks = torch.tensor(encoded_sent.get('attention_mask'))
-
-  return input_ids, attention_masks
+	input_ids = []
+	attention_masks = []
+	
+	node_lst = []
+	for node in node_content:
+		node_lst.append(node)
+	print('len node_lst', node_lst)
+	print('type root_node ', type(root_node))
+	print('len root_node ', len(root_node))
+	print('rootnode[0] ', root_node[0])
+	
+	MAX_LEN_SEQ = 384
+	encoded_sent = tokenizer.encode_plus(
+		text = root_node[0],
+		text_pair = root_node.tolist() + node_lst,
+		add_special_tokens = True,
+		max_length = MAX_LEN_SEQ,
+		pad_to_max_length = True,
+		return_attention_mask = True
+	)
+	input_ids = torch.tensor(encoded_sent.get('input_ids'))
+	attention_masks = torch.tensor(encoded_sent.get('attention_mask'))
+	
+	return input_ids, attention_masks
 
 
 
@@ -329,14 +329,14 @@ def preprocessing_for_bert_combo(tweet_id):
 	return input_ids, attention_masks
 
 
-def preprocessing_for_bert_latest(root_node,node_content):
+def preprocessing_for_bert_latest(root_node, node_content):
 	# Create empty lists to store outputs
 	input_ids = []
 	attention_masks = []
 
 	node_lst = []
 	for node in node_content:
-	  node_lst.append(node)
+		node_lst.append(node)
 
 	whole_lst = []
 	whole_lst = root_node.tolist() + node_lst
@@ -347,19 +347,23 @@ def preprocessing_for_bert_latest(root_node,node_content):
 	#print('node content 0,', node_lst[0])
 
 	for c in whole_lst:
+		
+		encoded_sent = tokenizer.encode_plus(
+			text=root_node[0],  # Preprocess sentence
+			text_pair=c,
+			add_special_tokens=True,        # Add `[CLS]` and `[SEP]`
+			max_length=MAX_LEN,                  # Max length to truncate/pad
+			#pad_to_max_length=True,         # Pad sentence to max length
+			truncation=True,
+			padding="max_length", 
+			#return_tensors='pt',           # Return PyTorch tensor
+			return_attention_mask=True      # Return attention mask
+		)
 
-	  encoded_sent = tokenizer.encode_plus(
-				text=root_node[0],  # Preprocess sentence
-				text_pair= c,
-				add_special_tokens=True,        # Add `[CLS]` and `[SEP]`
-				max_length=MAX_LEN,                  # Max length to truncate/pad
-				pad_to_max_length=True,         # Pad sentence to max length
-				#return_tensors='pt',           # Return PyTorch tensor
-				return_attention_mask=True      # Return attention mask
-				)
-	  # Add the outputs to the lists
-	  input_ids.append(encoded_sent.get('input_ids'))
-	  attention_masks.append(encoded_sent.get('attention_mask'))
+		# Add the outputs to the lists
+		input_ids.append(encoded_sent.get('input_ids'))
+		attention_masks.append(encoded_sent.get('attention_mask'))
+
 	#final_input_ids = np.array([input_ids])
 	#final_attention_masks = np.array([attention_masks])
 	# Convert lists to tensors
@@ -370,34 +374,33 @@ def preprocessing_for_bert_latest(root_node,node_content):
 
 
 def preprocessing_for_bert_seq(root_node,node_content):
-  input_ids = []
-  attention_masks = []
+	input_ids = []
+	attention_masks = []
+	
+	node_lst = []
+	for node in node_content:
+		node_lst.append(node)
 
-  node_lst = []
-  for node in node_content:
-	node_lst.append(node)
-  print('len node_lst', node_lst)
-  print('type root_node ', type(root_node))
-  print('len root_node ', len(root_node))
-  print('rootnode[0] ', root_node[0])
-
-  MAX_LEN_SEQ = 384
-  encoded_sent = tokenizer.encode_plus(
-	  text = root_node[0],
-	  text_pair = root_node.tolist() + node_lst,
-	  add_special_tokens = True,
-	  max_length = MAX_LEN_SEQ,
-	  pad_to_max_length = True,
-	  return_attention_mask = True
-  )
-  input_ids = torch.tensor(encoded_sent.get('input_ids'))
-  attention_masks = torch.tensor(encoded_sent.get('attention_mask'))
-
-  return input_ids, attention_masks
-
-
-
-
+	#print("len node_lst:", len(node_lst))
+	#print("type root_node:", type(root_node))
+	#print("len root_node:", len(root_node))
+	#print("rootnode[0]:", root_node[0])
+	
+	MAX_LEN_SEQ = 384
+	encoded_sent = tokenizer.encode_plus(
+		text=root_node[0],
+		text_pair=root_node.tolist() + node_lst,
+		add_special_tokens=True,
+		max_length=MAX_LEN_SEQ,
+		#pad_to_max_length=True,
+		truncation=True,
+		padding="max_length", 
+		return_attention_mask=True
+	)
+	input_ids = torch.tensor(encoded_sent.get("input_ids"))
+	attention_masks = torch.tensor(encoded_sent.get("attention_mask"))
+	
+	return input_ids, attention_masks
 
 
 class EarlyStopping:
@@ -692,20 +695,20 @@ def get_file_handler():
    return file_handler
 
 def print_gpu_info(m=''):
-   print(m)
-   for i in range(torch.cuda.device_count()):
-      d = 1024 ** 3
-      t = torch.cuda.get_device_properties(i).total_memory / d
-      r = torch.cuda.memory_reserved(i) / d
-      a = torch.cuda.memory_allocated(i) / d
-      f = r-a  # free inside reserved
-      print(f'Device: {i}\tTotal: {t:.2f}G\tReserved: {r*100/t:.1f}%\tAllocated: {a*100/t:.1f}%')
+	print(m)
+	for i in range(torch.cuda.device_count()):
+		d = 1024 ** 3
+		t = torch.cuda.get_device_properties(i).total_memory / d
+		r = torch.cuda.memory_reserved(i) / d
+		a = torch.cuda.memory_allocated(i) / d
+		f = r-a  # free inside reserved
+		print(f'Device: {i}\tTotal: {t:.2f}G\tReserved: {r*100/t:.1f}%\tAllocated: {a*100/t:.1f}%')
 
 def get_logger(logger_name):
-   logger = logging.getLogger(logger_name)
-   if not logger.hasHandlers():
-      logger.setLevel(logging.DEBUG)
-      logger.addHandler(get_console_handler())
-      logger.propagate = False
-      logger.gpu_usage = print_gpu_info
-   return logger
+	logger = logging.getLogger(logger_name)
+	if not logger.hasHandlers():
+		logger.setLevel(logging.DEBUG)
+		logger.addHandler(get_console_handler())
+		logger.propagate = False
+		logger.gpu_usage = print_gpu_info
+	return logger

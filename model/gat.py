@@ -53,7 +53,7 @@ class SimpleGAT(nn.Module):
 
 
 class SimpleGATNet(nn.Module):
-    def __init__(self,in_feats,hid_feats,out_feats,res_feats,pooling='scatter_mean',dropout):
+    def __init__(self,in_feats,hid_feats,out_feats,res_feats,dropout,pooling='scatter_mean'):
         super(SimpleGATNet, self).__init__()
         self.pooling = pooling
         self.dropout = dropout
@@ -73,7 +73,7 @@ class SimpleGATNet(nn.Module):
 
 
 class TripleGAT(nn.Module):
-    def __init__(self,in_feats,hid_feats,out_feats,pooling='scatter_mean',dropout):
+    def __init__(self,in_feats,hid_feats,out_feats,dropout,pooling='scatter_mean'):
         super(TripleGAT, self).__init__()
         self.pooling = pooling
         self.dropout = dropout
@@ -122,7 +122,7 @@ class TripleGAT(nn.Module):
 
 
 class TripleGATNet(nn.Module):
-    def __init__(self,in_feats,hid_feats,out_feats,res_feats,pooling='scatter_mean',dropout):
+    def __init__(self,in_feats,hid_feats,out_feats,res_feats,dropout,pooling='scatter_mean'):
         super(TripleGATNet, self).__init__()
         self.pooling = pooling
         self.dropout = dropout

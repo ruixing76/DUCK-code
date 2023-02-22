@@ -1,7 +1,10 @@
+import torch.nn as nn
 from transformers import BertModel
-from gat import SimpleGAT
-from TTransformer import TTransformerModel
-from bert_gat import SimpleGAT_BERT
+
+from .gat import SimpleGAT
+from .bert_gat import SimpleGAT_BERT
+from .TTransformer import TTransformerModel
+
 # Create the BertClassfier class
 class BertClassifier(nn.Module):
     """Bert Model for Classification Tasks.
