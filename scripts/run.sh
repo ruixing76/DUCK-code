@@ -75,19 +75,22 @@ do
 	do
 		for lr_gnn in 1e-4 2e-4 3e-4 4e-4
 		do
-			## Comment Tree
-			python train.py \
-				--datasetName $dataset \
-				--baseDirectory ./data \
-				--n_classes $n_classes \
-				--foldnum $fold \
-				--mode CommentTree \
-				--modelName Simple_GAT_BERT \
-				--batchsize $batch_size \
-				--learningRate $lr_bert \
-				--learningRateGraph $lr_gnn \
-				--dropout_gat 0.4 \
-				--n_epochs 10
+			for dropout_gat in 0.2 0.3 0.4 0.5 0.6
+			do
+				## Comment Tree (BERT+GAT)
+				python train.py \
+					--datasetName $dataset \
+					--baseDirectory ./data \
+					--n_classes $n_classes \
+					--foldnum $fold \
+					--mode CommentTree \
+					--modelName Simple_GAT_BERT \
+					--batchsize $batch_size \
+					--learningRate $lr_bert \
+					--learningRateGraph $lr_gnn \
+					--dropout_gat 0.4 \
+					--n_epochs 10
+			done
 		done
 	done
 done
