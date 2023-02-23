@@ -17,6 +17,7 @@ class SimpleGAT_BERT(nn.Module):
 		self.bert = BertModel.from_pretrained('bert-base-uncased')
 		self.conv1 = GATConv(in_feats, hid_feats, heads=n_heads, dropout=gat_dropout)
 		self.conv2 = GATConv(hid_feats * n_heads, out_feats, heads=n_heads, concat=False, dropout=gat_dropout)
+		self.dropout = gat_dropout
 
 	def forward(self, data):
 		#x, edge_index = data.x, data.edge_index
@@ -33,10 +34,10 @@ class SimpleGAT_BERT(nn.Module):
 		x, edge_index = last_hidden_state_cls, data.edge_index
 		#print('*******************After  x.shape', x.shape)
 		#x = F.dropout(x, p=0.6, training=self.training)
-		x = F.dropout(x, p=0.5, training=self.training)
+		x = F.dropout(x, p=self.dropout, training=self.training)
 		x = F.elu(self.conv1(x, edge_index))
 		#x = F.dropout(x, p=0.6, training=self.training)
-		x = F.dropout(x, p=0.5, training=self.training)
+		x = F.dropout(x, p=self.dropout, training=self.training)
 		x = self.conv2(x, edge_index)
 		if self.pooling == 'scatter_mean':
 			x = scatter_mean(x,data.batch,dim=0)
@@ -75,11 +76,11 @@ class SimpleGAT_BERT(nn.Module):
 
 class SimpleGATBERTNet(nn.Module):
 	#def __init__(self, in_feats, hid_feats, out_feats, D_in, H, D_out, pooling='scatter_mean'):
-	def __init__(self, D_in, hid_feats, out_feats, H, D_out, pooling='scatter_mean'):
+	def __init__(self, D_in, hid_feats, out_feats, H, D_out, gat_dropout, pooling='scatter_mean'):
 		super(SimpleGATBERTNet, self).__init__()
 		self.pooling = pooling
 		#D_in, H = 768,32,4
-		self.gnn = SimpleGAT_BERT(in_feats=D_in, hid_feats=hid_feats, out_feats=out_feats, n_heads=8, gat_dropout=0.5, pooling=pooling)
+		self.gnn = SimpleGAT_BERT(in_feats=D_in, hid_feats=hid_feats, out_feats=out_feats, n_heads=8, gat_dropout=gat_dropout, pooling=pooling)
 		#self.gnn = SimpleGAT_BERT(D_in, hid_feats, out_feats, pooling, n_heads=8)
 
 		if (self.pooling == 'mean_max') or (self.pooling == 'scatter_mean_max'):

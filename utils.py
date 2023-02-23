@@ -425,8 +425,12 @@ class EarlyStopping:
 		self.F4 = 0
 		self.val_loss_min = np.Inf
 
+		self.best_metrics = None
+
 	def __call__(self, val_loss, acc, F1, F2, F3, F4, model, modelname, str):
 		score = -val_loss
+
+		is_best = True
 
 		if self.best_score is None:
 			self.best_score = score
@@ -436,12 +440,15 @@ class EarlyStopping:
 			self.F3 = F3
 			self.F4 = F4
 			#self.save_checkpoint(val_loss, model, modelname, str)
+
+			return is_best
 		elif score < self.best_score:
 			self.counter += 1
 			if self.counter >= self.patience:
 				self.early_stop = True
 				print("BEST Accuracy: {:.4f}|NR F1: {:.4f}|FR F1: {:.4f}|TR F1: {:.4f}|UR F1: {:.4f}"
 					  .format(self.accs,self.F1,self.F2,self.F3,self.F4))
+			return not is_best
 		else:
 			self.best_score = score
 			self.accuracy = acc
@@ -451,6 +458,8 @@ class EarlyStopping:
 			self.F4 = F4
 			#self.save_checkpoint(val_loss, model,modelname,str)
 			self.counter = 0
+
+			return is_best
 
 	def save_checkpoint(self, val_loss, model,modelname,str):
 		'''Saves model when validation loss decrease.'''

@@ -44,7 +44,8 @@ do
 			--modelName Simple_GAT_BERT \
 			--batchsize $batch_size \
 			--learningRate 2e-5 \
-			--learningRateGraph 2e-4
+			--learningRateGraph 2e-4 \
+			--dropout_gat 0.2
 		
 		## CCCT (Comment Chain + Comment Tree)
 		#python train.py \

@@ -90,7 +90,14 @@ class DUCK:
 			#"Simple_GCN": SimpleGCNNet(),
 			#"Triple_GCN": TripleGCNNet(),
 			#"Simple_GAT": SimpleGATNet(),
-			"Simple_GAT_BERT": SimpleGATBERTNet(D_in=768, hid_feats=768, out_feats=768, H=32, D_out=self.args.n_classes),
+			"Simple_GAT_BERT": SimpleGATBERTNet(
+				D_in=768, 
+				hid_feats=768, 
+				out_feats=768, 
+				H=32, 
+				D_out=self.args.n_classes, 
+				gat_dropout=self.args.dropout_gat
+			),
 			"CCCTNet": CCCTNet(in_feats=768, hid_feats=768, out_feats=768, D_in=768, D_H=64, D_out=self.args.n_classes), 
 			#"Triple_GAT_BERT": TripleGATBERTNet(),
 			#"DUCK": ComboNet(),
@@ -162,6 +169,21 @@ class DUCK:
 		val_accs = []
 		early_stopping = EarlyStopping(patience=self.patience, verbose=True)
 
+		## Open file for saving metrics
+		best_metrics = None
+		result_file = "{}/{}.txt".format(self.args.result_path, self.args.datasetName)
+		if os.isfile(result_file):
+			fw = open(result_file, "a")
+		else:
+			fw = open(result_file, "w")
+			fw.write("{:4s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\n".format(
+				"Fold", "lr", "glr", "Acc." , "macroF", 
+				"Acc1", "Prec1", "Recll1", "F1",
+				"Acc2", "Prec2", "Recll2", "F2",
+				"Acc3", "Prec3", "Recll3", "F3",
+				"Acc4", "Prec4", "Recll4", "F4"
+			))
+
 		print("\nStart training...")
 		for epoch in range(self.args.n_epochs):
 
@@ -202,7 +224,8 @@ class DUCK:
 			model.eval()
 			temp_val_losses = []
 			temp_val_accs = []
-			temp_val_Acc_all, temp_val_Acc1, temp_val_Prec1, temp_val_Recll1, temp_val_F1, \
+			temp_val_Acc_all, \
+			temp_val_Acc1, temp_val_Prec1, temp_val_Recll1, temp_val_F1, \
 			temp_val_Acc2, temp_val_Prec2, temp_val_Recll2, temp_val_F2, \
 			temp_val_Acc3, temp_val_Prec3, temp_val_Recll3, temp_val_F3, \
 			temp_val_Acc4, temp_val_Prec4, temp_val_Recll4, temp_val_F4 = [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
@@ -243,7 +266,7 @@ class DUCK:
 			for res_ in res:
 				print(res_)
 			logger.info(f'results: {res}')
-			early_stopping(np.mean(temp_val_losses), np.mean(temp_val_accs), np.mean(temp_val_F1), np.mean(temp_val_F2),
+			is_best = early_stopping(np.mean(temp_val_losses), np.mean(temp_val_accs), np.mean(temp_val_F1), np.mean(temp_val_F2),
 						   np.mean(temp_val_F3), np.mean(temp_val_F4), model, self.args.modelName, "{}{}".format(self.args.datasetName, self.args.foldnum))
 			
 			accs = np.mean(temp_val_accs)
@@ -266,6 +289,22 @@ class DUCK:
 			logger.info(f"acc {accs}, F1 {F1} | F2 {F2} | F3 {F3} | F4 {F4} ")
 
 			## TODO: add recording best scores!
+			if is_best:
+				best_metrics = {
+					"Acc.": acc, "macroF": (F1 + F2 + F3 + F4) / 4, 
+					"Acc1": np.mean(temp_val_Acc1), "Prec1": np.mean(temp_val_Prec1), "Recll1": np.mean(temp_val_Recll1), "F1": F1, 
+					"Acc2": np.mean(temp_val_Acc2), "Prec2": np.mean(temp_val_Prec2), "Recll2": np.mean(temp_val_Recll2), "F2": F2, 
+					"Acc3": np.mean(temp_val_Acc3), "Prec3": np.mean(temp_val_Prec3), "Recll3": np.mean(temp_val_Recll3), "F3": F3, 
+					"Acc4": np.mean(temp_val_Acc4), "Prec4": np.mean(temp_val_Prec4), "Recll4": np.mean(temp_val_Recll4), "F4": F4, 
+				}
+
+		fw.write("{:4d}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(
+			self.args.foldnum, self.args.learningRate, self.args.learningRateGraph, best_metrics["Acc."] , best_metrics["macroF"], 
+			best_metrics["Acc1"], best_metrics["Prec1"], best_metrics["Recll1"], best_metrics["F1"],
+			best_metrics["Acc2"], best_metrics["Prec2"], best_metrics["Recll2"], best_metrics["F2"],
+			best_metrics["Acc3"], best_metrics["Prec3"], best_metrics["Recll3"], best_metrics["F3"],
+			best_metrics["Acc4"], best_metrics["Prec4"], best_metrics["Recll4"], best_metrics["F4"]
+		))
 
 	def run(self):
 		self.train()
@@ -280,16 +319,18 @@ def main():
 	parser.add_argument("--foldnum", default=0, type=int, help="The fold number to test out")
 	parser.add_argument("--datasetName", default=None, type=str, required=True, help="The name of the dataset to play with")
 	parser.add_argument("--n_classes", default=4, type=int, help="4 for Twitter15/Twitter16, 3 for semeval2019")
+	parser.add_argument("--result_path", type=str, default="./result")
 
 	#Hyper-parameters
 	parser.add_argument("--bertVersion", default="bert-base-uncased", type=str, help="set up the bert version")
 	parser.add_argument("--weight_decay", default=0.0, type=float, help="the weight decay")
 	parser.add_argument("--learningRate", default=5e-5, type=float, help="the initial learning rate")
 	parser.add_argument("--learningRateGraph", default=1e-5, type=float, help="the inital learning rate for GNN")
-	parser.add_argument("--patience" , default= 10, type=int, help="early stop patience")
-	parser.add_argument("--n_epochs" , default= 10, type=int, help="fine tuning epoches")
-	parser.add_argument("--batchsize", default=256, type=int, help="batch size")
-	parser.add_argument("--multi_gpu", default=  0, type=int, help="number of GPUs")
+	parser.add_argument("--patience"   , default= 10, type=int, help="early stop patience")
+	parser.add_argument("--n_epochs"   , default= 10, type=int, help="fine tuning epoches")
+	parser.add_argument("--batchsize"  , default=256, type=int, help="batch size")
+	parser.add_argument("--multi_gpu"  , default=  0, type=int, help="number of GPUs")
+	parser.add_argument("--dropout_gat", default=0.5, type=float)
 
 	#pick up the model to play with
 	parser.add_argument("--modelName", default=None, required=True, type=str, help="pick up the model to play with")
