@@ -167,7 +167,7 @@ class DUCK:
 		val_losses = []
 		train_accs = []
 		val_accs = []
-		early_stopping = EarlyStopping(patience=self.patience, verbose=True)
+		early_stopping = EarlyStopping(args=self.args, patience=self.patience, verbose=True)
 
 		## Open file for saving metrics
 		best_metrics = None

@@ -405,7 +405,7 @@ def preprocessing_for_bert_seq(root_node,node_content):
 
 class EarlyStopping:
 	"""Early stops the training if validation loss doesn't improve after a given patience."""
-	def __init__(self, patience=10, verbose=False):
+	def __init__(self, args, patience=10, verbose=False):
 		"""
 		Args:
 			patience (int): How long to wait after last time validation loss improved.
@@ -425,12 +425,15 @@ class EarlyStopping:
 		self.F4 = 0
 		self.val_loss_min = np.Inf
 
+		self.args = args
 		self.best_metrics = None
 
 	def __call__(self, val_loss, acc, F1, F2, F3, F4, model, modelname, str):
-		score = -val_loss
+		#score = -val_loss
 
 		is_best = True
+		macroF1 = (F1 + F2 + F3 + F4) / self.args.n_classes
+		score = macroF1
 
 		if self.best_score is None:
 			self.best_score = score
@@ -500,64 +503,64 @@ def evaluationRumour4(prediction, y):  # 4 dim
 		if Act != 3 and Pre != 3: TN4 += 1
 
 	## print result
-	Acc_all = round(float(TP1 + TP2 + TP3 + TP4) / float(len(y) ), 4)
+	Acc_all = round(float(TP1 + TP2 + TP3 + TP4) / float(len(y)), 4)
 	Acc1 = round(float(TP1 + TN1) / float(TP1 + TN1 + FN1 + FP1), 4)
-	if (TP1 + FP1)==0:
-		Prec1 =0
+	if (TP1 + FP1) == 0:
+		Prec1 = 0
 	else:
 		Prec1 = round(float(TP1) / float(TP1 + FP1), 4)
-	if (TP1 + FN1 )==0:
-		Recll1 =0
+	if (TP1 + FN1) == 0:
+		Recll1 = 0
 	else:
-		Recll1 = round(float(TP1) / float(TP1 + FN1 ), 4)
-	if (Prec1 + Recll1 )==0:
-		F1 =0
+		Recll1 = round(float(TP1) / float(TP1 + FN1), 4)
+	if (Prec1 + Recll1) == 0:
+		F1 = 0
 	else:
-		F1 = round(2 * Prec1 * Recll1 / (Prec1 + Recll1 ), 4)
+		F1 = round(2 * Prec1 * Recll1 / (Prec1 + Recll1), 4)
 
 	Acc2 = round(float(TP2 + TN2) / float(TP2 + TN2 + FN2 + FP2), 4)
-	if (TP2 + FP2)==0:
-		Prec2 =0
+	if (TP2 + FP2) == 0:
+		Prec2 = 0
 	else:
 		Prec2 = round(float(TP2) / float(TP2 + FP2), 4)
-	if (TP2 + FN2 )==0:
-		Recll2 =0
+	if (TP2 + FN2) == 0:
+		Recll2 = 0
 	else:
-		Recll2 = round(float(TP2) / float(TP2 + FN2 ), 4)
-	if (Prec2 + Recll2 )==0:
-		F2 =0
+		Recll2 = round(float(TP2) / float(TP2 + FN2), 4)
+	if (Prec2 + Recll2) == 0:
+		F2 = 0
 	else:
-		F2 = round(2 * Prec2 * Recll2 / (Prec2 + Recll2 ), 4)
+		F2 = round(2 * Prec2 * Recll2 / (Prec2 + Recll2), 4)
 
 	Acc3 = round(float(TP3 + TN3) / float(TP3 + TN3 + FN3 + FP3), 4)
-	if (TP3 + FP3)==0:
-		Prec3 =0
+	if (TP3 + FP3) == 0:
+		Prec3 = 0
 	else:
 		Prec3 = round(float(TP3) / float(TP3 + FP3), 4)
-	if (TP3 + FN3 )==0:
-		Recll3 =0
+	if (TP3 + FN3) == 0:
+		Recll3 = 0
 	else:
 		Recll3 = round(float(TP3) / float(TP3 + FN3), 4)
-	if (Prec3 + Recll3 )==0:
-		F3 =0
+	if (Prec3 + Recll3) == 0:
+		F3 = 0
 	else:
 		F3 = round(2 * Prec3 * Recll3 / (Prec3 + Recll3), 4)
 
 	Acc4 = round(float(TP4 + TN4) / float(TP4 + TN4 + FN4 + FP4), 4)
-	if (TP4 + FP4)==0:
-		Prec4 =0
+	if (TP4 + FP4) == 0:
+		Prec4 = 0
 	else:
 		Prec4 = round(float(TP4) / float(TP4 + FP4), 4)
 	if (TP4 + FN4) == 0:
 		Recll4 = 0
 	else:
 		Recll4 = round(float(TP4) / float(TP4 + FN4), 4)
-	if (Prec4 + Recll4 )==0:
-		F4 =0
+	if (Prec4 + Recll4) == 0:
+		F4 = 0
 	else:
 		F4 = round(2 * Prec4 * Recll4 / (Prec4 + Recll4), 4)
 
-	return  Acc_all,Acc1, Prec1, Recll1, F1,Acc2, Prec2, Recll2, F2,Acc3, Prec3, Recll3, F3,Acc4, Prec4, Recll4, F4
+	return  Acc_all, Acc1, Prec1, Recll1, F1,Acc2, Prec2, Recll2, F2,Acc3, Prec3, Recll3, F3, Acc4, Prec4, Recll4, F4
 
 
 

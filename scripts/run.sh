@@ -88,7 +88,7 @@ do
 					--batchsize $batch_size \
 					--learningRate $lr_bert \
 					--learningRateGraph $lr_gnn \
-					--dropout_gat 0.4 \
+					--dropout_gat $dropout_gat \
 					--n_epochs 10
 			done
 		done
