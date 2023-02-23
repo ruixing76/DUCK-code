@@ -172,7 +172,7 @@ class DUCK:
 		## Open file for saving metrics
 		best_metrics = None
 		result_file = "{}/{}.txt".format(self.args.result_path, self.args.datasetName)
-		if os..path.isfile(result_file):
+		if os.path.isfile(result_file):
 			fw = open(result_file, "a")
 		else:
 			fw = open(result_file, "w")
