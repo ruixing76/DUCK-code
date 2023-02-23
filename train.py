@@ -255,9 +255,9 @@ class DUCK:
 			print("Epoch {:05d} | Val_Loss {:.4f} | Val_Accuracy {:.4f}".format(epoch, np.mean(temp_val_losses),np.mean(temp_val_accs)))
 			temp_mean_val_losses = np.mean(temp_val_losses)
 			temp_mean_val_accs = np.mean(temp_val_accs)
-			logger.info(f"epoch {epoch}, {temp_mean_val_losses},{temp_mean_val_accs}")
+			#logger.info(f"epoch {epoch}, {temp_mean_val_losses},{temp_mean_val_accs}")
 
-			res = ["acc:{:.4f}".format(np.mean(temp_val_Acc_all)),
+			res = ["acc:{:.4f},macroF:{:.4f}".format(np.mean(temp_val_Acc_all), (np.mean(temp_val_F1) + np.mean(temp_val_F2) + np.mean(temp_val_F3) + np.mean(temp_val_F4)) / 4), 
 				   "C1:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc1), np.mean(temp_val_Prec1), np.mean(temp_val_Recll1), np.mean(temp_val_F1)),
 				   "C2:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc2), np.mean(temp_val_Prec2), np.mean(temp_val_Recll2), np.mean(temp_val_F2)),
 				   "C3:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc3), np.mean(temp_val_Prec3), np.mean(temp_val_Recll3), np.mean(temp_val_F3)),
@@ -298,7 +298,7 @@ class DUCK:
 					"Acc4": np.mean(temp_val_Acc4), "Prec4": np.mean(temp_val_Prec4), "Recll4": np.mean(temp_val_Recll4), "F4": F4, 
 				}
 
-		fw.write("{:4d}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(
+		fw.write("{:4d}\t{:.0E}\t{:.0E}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(
 			self.args.foldnum, self.args.learningRate, self.args.learningRateGraph, best_metrics["Acc."] , best_metrics["macroF"], 
 			best_metrics["Acc1"], best_metrics["Prec1"], best_metrics["Recll1"], best_metrics["F1"],
 			best_metrics["Acc2"], best_metrics["Prec2"], best_metrics["Recll2"], best_metrics["F2"],
