@@ -291,7 +291,7 @@ class DUCK:
 			## TODO: add recording best scores!
 			if is_best:
 				best_metrics = {
-					"Acc.": acc, "macroF": (F1 + F2 + F3 + F4) / 4, 
+					"Acc.": accs, "macroF": (F1 + F2 + F3 + F4) / 4, 
 					"Acc1": np.mean(temp_val_Acc1), "Prec1": np.mean(temp_val_Prec1), "Recll1": np.mean(temp_val_Recll1), "F1": F1, 
 					"Acc2": np.mean(temp_val_Acc2), "Prec2": np.mean(temp_val_Prec2), "Recll2": np.mean(temp_val_Recll2), "F2": F2, 
 					"Acc3": np.mean(temp_val_Acc3), "Prec3": np.mean(temp_val_Prec3), "Recll3": np.mean(temp_val_Recll3), "F3": F3, 
