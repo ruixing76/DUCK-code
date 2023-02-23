@@ -176,8 +176,9 @@ class DUCK:
 			fw = open(result_file, "a")
 		else:
 			fw = open(result_file, "w")
-			fw.write("{:4s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\n".format(
-				"Fold", "lr", "glr", "Acc." , "macroF", 
+			fw.write("{:4s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\t{:6s}\n".format(
+				"Fold", "lr", "glr", "dropout", 
+				"Acc.", "macroF", 
 				"Acc1", "Prec1", "Recll1", "F1",
 				"Acc2", "Prec2", "Recll2", "F2",
 				"Acc3", "Prec3", "Recll3", "F3",
@@ -257,7 +258,7 @@ class DUCK:
 			temp_mean_val_accs = np.mean(temp_val_accs)
 			#logger.info(f"epoch {epoch}, {temp_mean_val_losses},{temp_mean_val_accs}")
 
-			res = ["acc:{:.4f},macroF:{:.4f}".format(np.mean(temp_val_Acc_all), (np.mean(temp_val_F1) + np.mean(temp_val_F2) + np.mean(temp_val_F3) + np.mean(temp_val_F4)) / 4), 
+			res = ["acc:{:.4f},macroF:{:.4f}".format(np.mean(temp_val_Acc_all), (np.mean(temp_val_F1) + np.mean(temp_val_F2) + np.mean(temp_val_F3) + np.mean(temp_val_F4)) / self.args.n_classes), 
 				   "C1:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc1), np.mean(temp_val_Prec1), np.mean(temp_val_Recll1), np.mean(temp_val_F1)),
 				   "C2:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc2), np.mean(temp_val_Prec2), np.mean(temp_val_Recll2), np.mean(temp_val_F2)),
 				   "C3:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc3), np.mean(temp_val_Prec3), np.mean(temp_val_Recll3), np.mean(temp_val_F3)),
@@ -291,15 +292,15 @@ class DUCK:
 			## TODO: add recording best scores!
 			if is_best:
 				best_metrics = {
-					"Acc.": accs, "macroF": (F1 + F2 + F3 + F4) / 4, 
+					"Acc.": accs, "macroF": (F1 + F2 + F3 + F4) / self.args.n_classes, 
 					"Acc1": np.mean(temp_val_Acc1), "Prec1": np.mean(temp_val_Prec1), "Recll1": np.mean(temp_val_Recll1), "F1": F1, 
 					"Acc2": np.mean(temp_val_Acc2), "Prec2": np.mean(temp_val_Prec2), "Recll2": np.mean(temp_val_Recll2), "F2": F2, 
 					"Acc3": np.mean(temp_val_Acc3), "Prec3": np.mean(temp_val_Prec3), "Recll3": np.mean(temp_val_Recll3), "F3": F3, 
 					"Acc4": np.mean(temp_val_Acc4), "Prec4": np.mean(temp_val_Prec4), "Recll4": np.mean(temp_val_Recll4), "F4": F4, 
 				}
 
-		fw.write("{:4d}\t{:.0E}\t{:.0E}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(
-			self.args.foldnum, self.args.learningRate, self.args.learningRateGraph, best_metrics["Acc."] , best_metrics["macroF"], 
+		fw.write("{:4d}\t{:.0E}\t{:.0E}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(
+			self.args.foldnum, self.args.learningRate, self.args.learningRateGraph, self.args.dropout_gat, best_metrics["Acc."] , best_metrics["macroF"], 
 			best_metrics["Acc1"], best_metrics["Prec1"], best_metrics["Recll1"], best_metrics["F1"],
 			best_metrics["Acc2"], best_metrics["Prec2"], best_metrics["Recll2"], best_metrics["F2"],
 			best_metrics["Acc3"], best_metrics["Prec3"], best_metrics["Recll3"], best_metrics["F3"],
