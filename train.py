@@ -65,7 +65,7 @@ class DUCK:
 
 
 	def loadfolddatawithKnownFold(self):
-		print("\nLoading 5-fold data of fold [{}]...".format(self.foldnum))
+		print("\nLoading 5-fold data of {} fold [{}]...".format(self.datasetName, self.foldnum))
 		fold_str = str(self.foldnum)
 		cc_path = "{}/{}_5fold/fold{}".format(self.base_dir, self.datasetName, fold_str)
 		train_file_path = os.path.join(cc_path, "_x_train.pkl")
