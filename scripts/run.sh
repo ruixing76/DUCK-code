@@ -72,36 +72,36 @@ do
 done
 
 ## Hyperparameters tuning
-#for dataset in Twitter15 Twitter16 semeval2019
-#do
-#	if [ $dataset = semeval2019 ]
-#	then
-#		n_classes=3
-#	else
-#		n_classes=4
-#	fi
-#
-#	fold=0
-#	for lr_bert in 1e-5 2e-5 3e-5 4e-5 5e-5
-#	do
-#		for lr_gnn in 1e-4 2e-4 3e-4 4e-4
-#		do
-#			for dropout_gat in 0.2 0.3 0.4 0.5 0.6
-#			do
-#				## Comment Tree (BERT+GAT)
-#				python train.py \
-#					--datasetName $dataset \
-#					--baseDirectory ./data \
-#					--n_classes $n_classes \
-#					--foldnum $fold \
-#					--mode CommentTree \
-#					--modelName Simple_GAT_BERT \
-#					--batchsize $batch_size \
-#					--learningRate $lr_bert \
-#					--learningRateGraph $lr_gnn \
-#					--dropout_gat $dropout_gat \
-#					--n_epochs 10
-#			done
-#		done
-#	done
-#done
+for dataset in Twitter15 Twitter16 semeval2019
+do
+	if [ $dataset = semeval2019 ]
+	then
+		n_classes=3
+	else
+		n_classes=4
+	fi
+
+	fold=0
+	for lr_bert in 1e-5 2e-5 3e-5 4e-5 5e-5
+	do
+		for lr_gnn in 1e-4 2e-4 3e-4 4e-4
+		do
+			for dropout_gat in 0.2 0.3 0.4 0.5 0.6
+			do
+				## Comment Tree (BERT+GAT)
+				python train.py \
+					--datasetName $dataset \
+					--baseDirectory ./data \
+					--n_classes $n_classes \
+					--foldnum $fold \
+					--mode CommentTree \
+					--modelName Simple_GAT_BERT \
+					--batchsize $batch_size \
+					--learningRate $lr_bert \
+					--learningRateGraph $lr_gnn \
+					--dropout_gat $dropout_gat \
+					--n_epochs 10
+			done
+		done
+	done
+done
