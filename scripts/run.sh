@@ -41,33 +41,39 @@ do
 		lr_gnn=3e-4
 	fi
 
-	folds=$(seq 0 4)
-	for fold in $folds
+	for lr_gnn in 1e-4 2e-4 4e-4
 	do
-		## Comment Tree
-		python train.py \
-			--datasetName $dataset \
-			--baseDirectory ./data \
-			--n_classes $n_classes \
-			--foldnum $fold \
-			--mode CommentTree \
-			--modelName Simple_GAT_BERT \
-			--batchsize $batch_size \
-			--learningRate $lr_bert \
-			--learningRateGraph $lr_gnn \
-			--dropout_gat $dropout \
-			--n_epochs 20 \
-			#--max_tree_len 40
-		
-		## CCCT (Comment Chain + Comment Tree)
-		#python train.py \
-		#	--datasetName Twitter15 \
-		#	--baseDirectory ./data \
-		#	--n_classes 4 \
-		#	--foldnum 0 \
-		#	--mode CommentTree \
-		#	--modelName CCCTNet \
-		#	--batchsize 4
+		for dropout in 0.5 0.6
+		do
+			folds=$(seq 0 4)
+			for fold in $folds
+			do
+				## Comment Tree
+				python train.py \
+					--datasetName $dataset \
+					--baseDirectory ./data \
+					--n_classes $n_classes \
+					--foldnum $fold \
+					--mode CommentTree \
+					--modelName Simple_GAT_BERT \
+					--batchsize $batch_size \
+					--learningRate $lr_bert \
+					--learningRateGraph $lr_gnn \
+					--dropout_gat $dropout \
+					--n_epochs 20 \
+					#--max_tree_len 40
+				
+				## CCCT (Comment Chain + Comment Tree)
+				#python train.py \
+				#	--datasetName Twitter15 \
+				#	--baseDirectory ./data \
+				#	--n_classes 4 \
+				#	--foldnum 0 \
+				#	--mode CommentTree \
+				#	--modelName CCCTNet \
+				#	--batchsize 4
+			done
+		done
 	done
 done
 

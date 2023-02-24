@@ -384,6 +384,11 @@ def main():
 
 	args = parser.parse_args()
 
+	print("\n*** Hyperparameters ***")
+	print("lr_bert: {:.0E}".format(args.learningRate))
+	print("lr_gnn : {:.0E}".format(args.learningRateGraph))
+	print("dropout: {:.4f}".format(args.dropout_gat))
+
 	duck = DUCK(args)
 	duck.run()
 
