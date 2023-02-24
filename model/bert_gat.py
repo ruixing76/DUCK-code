@@ -17,7 +17,6 @@ class SimpleGAT_BERT(nn.Module):
 		self.bert = BertModel.from_pretrained('bert-base-uncased')
 		self.conv1 = GATConv(in_feats, hid_feats, heads=n_heads, dropout=gat_dropout)
 		self.conv2 = GATConv(hid_feats * n_heads, out_feats, heads=n_heads, concat=False, dropout=gat_dropout)
-		self.dropout = gat_dropout
 
 	def forward(self, data):
 		#x, edge_index = data.x, data.edge_index
@@ -33,11 +32,11 @@ class SimpleGAT_BERT(nn.Module):
 
 		x, edge_index = last_hidden_state_cls, data.edge_index
 		#print('*******************After  x.shape', x.shape)
-		#x = F.dropout(x, p=0.6, training=self.training)
-		x = F.dropout(x, p=self.dropout, training=self.training)
+		x = F.dropout(x, p=0.6, training=self.training)
+		#x = F.dropout(x, p=0.1, training=self.training)
 		x = F.elu(self.conv1(x, edge_index))
-		#x = F.dropout(x, p=0.6, training=self.training)
-		x = F.dropout(x, p=self.dropout, training=self.training)
+		x = F.dropout(x, p=0.6, training=self.training)
+		#x = F.dropout(x, p=0.1, training=self.training)
 		x = self.conv2(x, edge_index)
 		if self.pooling == 'scatter_mean':
 			x = scatter_mean(x,data.batch,dim=0)

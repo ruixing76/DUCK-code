@@ -2,13 +2,13 @@
 
 if [ $(hostname) = "ED716" ]; then
 	export CUDA_VISIBLE_DEVICES=1
-	batch_size=2
+	batch_size=4
 elif [ $(hostname) = "esc4000-g4" ]; then
 	export CUDA_VISIBLE_DEVICES=0
-	batch_size=2
+	batch_size=4
 elif [ $(hostname) = "basic-1" ]; then
 	export CUDA_VISIBLE_DEVICES=0
-	batch_size=2
+	batch_size=4
 elif [ $(hostname) = "basic-4" ]; then
 	export CUDA_VISIBLE_DEVICES=0
 	batch_size=4
@@ -24,21 +24,11 @@ fi
 #for dataset in Twitter15
 for dataset in Twitter15 Twitter16 semeval2019
 do
-	if [ $dataset = semeval2019 ]; then
+	if [ $dataset = semeval2019 ]
+	then
 		n_classes=3
-		dropout=0.5
-		lr_bert=2e-5
-		lr_gnn=3e-4
-	elif [ $dataset = Twitter15 ]; then
+	else
 		n_classes=4
-		dropout=0.5
-		lr_bert=2e-5
-		lr_gnn=3e-4
-	elif [ $dataset = Twitter16 ]; then
-		n_classes=4
-		dropout=0.5
-		lr_bert=2e-5
-		lr_gnn=3e-4
 	fi
 
 	folds=$(seq 0 4)
@@ -53,11 +43,11 @@ do
 			--mode CommentTree \
 			--modelName Simple_GAT_BERT \
 			--batchsize $batch_size \
-			--learningRate $lr_bert \
-			--learningRateGraph $lr_gnn \
-			--dropout_gat $dropout \
-			--n_epochs 20 \
-			#--max_tree_len 40
+			--learningRate 2e-5 \
+			--learningRateGraph 3e-4 \
+			--dropout_gat 0.5 \
+			--n_epochs 10 \
+			--max_tree_len 40
 		
 		## CCCT (Comment Chain + Comment Tree)
 		#python train.py \

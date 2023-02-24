@@ -65,7 +65,7 @@ class DUCK:
 
 
 	def loadfolddatawithKnownFold(self):
-		print("\nLoading 5-fold data...")
+		print("\nLoading 5-fold data of fold [{}]...".format(self.foldnum))
 		fold_str = str(self.foldnum)
 		cc_path = "{}/{}_5fold/fold{}".format(self.base_dir, self.datasetName, fold_str)
 		train_file_path = os.path.join(cc_path, "_x_train.pkl")
@@ -223,6 +223,7 @@ class DUCK:
 
 			## Evaluation
 			model.eval()
+			pred_all, y_all = [], []
 			temp_val_losses = []
 			temp_val_accs = []
 			temp_val_Acc_all, \
@@ -231,51 +232,88 @@ class DUCK:
 			temp_val_Acc3, temp_val_Prec3, temp_val_Recll3, temp_val_F3, \
 			temp_val_Acc4, temp_val_Prec4, temp_val_Recll4, temp_val_F4 = [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
 			tqdm_test_loader = tqdm(test_loader, desc="Epoch: {}, Eval".format(epoch))
-			for Batch_data in tqdm_test_loader:
-				optimizer.zero_grad()
-				Batch_data.to(device)
-				#val_emb, val_out = model(Batch_data)
-				val_out = model(Batch_data)
-				val_loss = F.nll_loss(val_out, Batch_data.y)
-				temp_val_losses.append(val_loss.item())
-				
-				_, val_pred = val_out.max(dim=1)
-				correct = val_pred.eq(Batch_data.y).sum().item()
-				val_acc = correct / len(Batch_data.y)
-				Acc_all, Acc1, Prec1, Recll1, F1, Acc2, Prec2, Recll2, F2, Acc3, Prec3, Recll3, F3, Acc4, Prec4, Recll4, F4 = evaluationRumour4(val_pred, Batch_data.y)
-				
-				temp_val_Acc_all.append(Acc_all)
-				temp_val_Acc1.append(Acc1), temp_val_Prec1.append(Prec1), temp_val_Recll1.append(Recll1), temp_val_F1.append(F1), \
-				temp_val_Acc2.append(Acc2), temp_val_Prec2.append(Prec2), temp_val_Recll2.append(Recll2), temp_val_F2.append(F2), \
-				temp_val_Acc3.append(Acc3), temp_val_Prec3.append(Prec3), temp_val_Recll3.append(Recll3), temp_val_F3.append(F3), \
-				temp_val_Acc4.append(Acc4), temp_val_Prec4.append(Prec4), temp_val_Recll4.append(Recll4), temp_val_F4.append(F4)
-				temp_val_accs.append(val_acc)
+			with torch.no_grad():
+				for Batch_data in tqdm_test_loader:
+					optimizer.zero_grad()
+					Batch_data.to(device)
+					#val_emb, val_out = model(Batch_data)
+					val_out = model(Batch_data)
+					val_loss = F.nll_loss(val_out, Batch_data.y)
+					temp_val_losses.append(val_loss.item())
+					
+					_, val_pred = val_out.max(dim=1)
+					correct = val_pred.eq(Batch_data.y).sum().item()
+					val_acc = correct / len(Batch_data.y)
+
+					#Acc_all, \
+					#Acc1, Prec1, Recll1, F1, \
+					#Acc2, Prec2, Recll2, F2, \
+					#Acc3, Prec3, Recll3, F3, \
+					#Acc4, Prec4, Recll4, F4 = evaluationRumour4(val_pred, Batch_data.y)
+					#
+					#temp_val_Acc_all.append(Acc_all)
+					#temp_val_Acc1.append(Acc1), temp_val_Prec1.append(Prec1), temp_val_Recll1.append(Recll1), temp_val_F1.append(F1), \
+					#temp_val_Acc2.append(Acc2), temp_val_Prec2.append(Prec2), temp_val_Recll2.append(Recll2), temp_val_F2.append(F2), \
+					#temp_val_Acc3.append(Acc3), temp_val_Prec3.append(Prec3), temp_val_Recll3.append(Recll3), temp_val_F3.append(F3), \
+					#temp_val_Acc4.append(Acc4), temp_val_Prec4.append(Prec4), temp_val_Recll4.append(Recll4), temp_val_F4.append(F4)
+					#temp_val_accs.append(val_acc)
+
+					## Save predictions & labels
+					pred_all.append(val_pred)
+					y_all.append(Batch_data.y)
+
+			## Evaluate all predictions
+			pred_all, y_all = torch.cat(pred_all), torch.cat(y_all)
+			
+			Acc_all, \
+			Acc1, Prec1, Recll1, F1, \
+			Acc2, Prec2, Recll2, F2, \
+			Acc3, Prec3, Recll3, F3, \
+			Acc4, Prec4, Recll4, F4 = evaluationRumour4(pred_all, y_all)
+			#ipdb.set_trace()
 
 			val_losses.append(np.mean(temp_val_losses))
-			val_accs.append(np.mean(temp_val_accs))
-			print("Epoch {:05d} | Val_Loss {:.4f} | Val_Accuracy {:.4f}".format(epoch, np.mean(temp_val_losses),np.mean(temp_val_accs)))
+			#val_accs.append(np.mean(temp_val_accs))
+			#print("Epoch {:05d} | Val_Loss {:.4f} | Val_Accuracy {:.4f}".format(epoch, np.mean(temp_val_losses),np.mean(temp_val_accs)))
+			print("Epoch {:05d} | Val_Loss {:.4f}".format(epoch, np.mean(temp_val_losses)))
 			temp_mean_val_losses = np.mean(temp_val_losses)
-			temp_mean_val_accs = np.mean(temp_val_accs)
+			#temp_mean_val_accs = np.mean(temp_val_accs)
 			#logger.info(f"epoch {epoch}, {temp_mean_val_losses},{temp_mean_val_accs}")
 
-			res = ["acc:{:.4f},macroF:{:.4f}".format(np.mean(temp_val_Acc_all), (np.mean(temp_val_F1) + np.mean(temp_val_F2) + np.mean(temp_val_F3) + np.mean(temp_val_F4)) / self.args.n_classes), 
-				   "C1:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc1), np.mean(temp_val_Prec1), np.mean(temp_val_Recll1), np.mean(temp_val_F1)),
-				   "C2:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc2), np.mean(temp_val_Prec2), np.mean(temp_val_Recll2), np.mean(temp_val_F2)),
-				   "C3:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc3), np.mean(temp_val_Prec3), np.mean(temp_val_Recll3), np.mean(temp_val_F3)),
-				   "C4:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc4), np.mean(temp_val_Prec4), np.mean(temp_val_Recll4), np.mean(temp_val_F4))]
+			#res = ["acc:{:.4f},macroF:{:.4f}".format(np.mean(temp_val_Acc_all), (np.mean(temp_val_F1) + np.mean(temp_val_F2) + np.mean(temp_val_F3) + np.mean(temp_val_F4)) / self.args.n_classes), 
+			#	   "C1:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc1), np.mean(temp_val_Prec1), np.mean(temp_val_Recll1), np.mean(temp_val_F1)),
+			#	   "C2:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc2), np.mean(temp_val_Prec2), np.mean(temp_val_Recll2), np.mean(temp_val_F2)),
+			#	   "C3:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc3), np.mean(temp_val_Prec3), np.mean(temp_val_Recll3), np.mean(temp_val_F3)),
+			#	   "C4:{:.4f},{:.4f},{:.4f},{:.4f}".format(np.mean(temp_val_Acc4), np.mean(temp_val_Prec4), np.mean(temp_val_Recll4), np.mean(temp_val_F4))]
 			#print('results:', res)
+			#logger.info(f"results: {res}")
+
+			#is_best = early_stopping(
+			#	np.mean(temp_val_losses), np.mean(temp_val_accs), np.mean(temp_val_F1), np.mean(temp_val_F2),
+			#	np.mean(temp_val_F3), np.mean(temp_val_F4), model, self.args.modelName, "{}{}".format(self.args.datasetName, self.args.foldnum)
+			#)
+			
+			#accs = np.mean(temp_val_accs)
+			#F1 = np.mean(temp_val_F1)
+			#F2 = np.mean(temp_val_F2)
+			#F3 = np.mean(temp_val_F3)
+			#F4 = np.mean(temp_val_F4)
+
+			res = ["acc: {:.4f}, macroF: {:.4f}".format(Acc_all, (F1 + F2 + F3 + F4) / self.args.n_classes), 
+				   "C1 : {:.4f}, {:.4f}, {:.4f}, {:.4f}".format(Acc1, Prec1, Recll1, F1),
+				   "C2 : {:.4f}, {:.4f}, {:.4f}, {:.4f}".format(Acc2, Prec2, Recll2, F2),
+				   "C3 : {:.4f}, {:.4f}, {:.4f}, {:.4f}".format(Acc3, Prec3, Recll3, F3),
+				   "C4 : {:.4f}, {:.4f}, {:.4f}, {:.4f}".format(Acc4, Prec4, Recll4, F4)]
 			for res_ in res:
 				print(res_)
-			logger.info(f'results: {res}')
-			is_best = early_stopping(np.mean(temp_val_losses), np.mean(temp_val_accs), np.mean(temp_val_F1), np.mean(temp_val_F2),
-						   np.mean(temp_val_F3), np.mean(temp_val_F4), model, self.args.modelName, "{}{}".format(self.args.datasetName, self.args.foldnum))
-			
-			accs = np.mean(temp_val_accs)
-			F1 = np.mean(temp_val_F1)
-			F2 = np.mean(temp_val_F2)
-			F3 = np.mean(temp_val_F3)
-			F4 = np.mean(temp_val_F4)
-			
+			logger.info(f"results: {res}")
+
+			is_best = early_stopping(
+				temp_mean_val_losses, Acc_all, F1, F2, F3, F4, 
+				model, self.args.modelName, "{}{}".format(self.datasetName, self.foldnum)
+			)
+			accs = Acc_all
+
 			if early_stopping.early_stop:
 				print("Early stopping")
 				logger.info(f"Early stopping")
@@ -291,12 +329,19 @@ class DUCK:
 
 			## TODO: add recording best scores!
 			if is_best:
+				#best_metrics = {
+				#	"Acc.": accs, "macroF": (F1 + F2 + F3 + F4) / self.args.n_classes, 
+				#	"Acc1": np.mean(temp_val_Acc1), "Prec1": np.mean(temp_val_Prec1), "Recll1": np.mean(temp_val_Recll1), "F1": F1, 
+				#	"Acc2": np.mean(temp_val_Acc2), "Prec2": np.mean(temp_val_Prec2), "Recll2": np.mean(temp_val_Recll2), "F2": F2, 
+				#	"Acc3": np.mean(temp_val_Acc3), "Prec3": np.mean(temp_val_Prec3), "Recll3": np.mean(temp_val_Recll3), "F3": F3, 
+				#	"Acc4": np.mean(temp_val_Acc4), "Prec4": np.mean(temp_val_Prec4), "Recll4": np.mean(temp_val_Recll4), "F4": F4, 
+				#}
 				best_metrics = {
 					"Acc.": accs, "macroF": (F1 + F2 + F3 + F4) / self.args.n_classes, 
-					"Acc1": np.mean(temp_val_Acc1), "Prec1": np.mean(temp_val_Prec1), "Recll1": np.mean(temp_val_Recll1), "F1": F1, 
-					"Acc2": np.mean(temp_val_Acc2), "Prec2": np.mean(temp_val_Prec2), "Recll2": np.mean(temp_val_Recll2), "F2": F2, 
-					"Acc3": np.mean(temp_val_Acc3), "Prec3": np.mean(temp_val_Prec3), "Recll3": np.mean(temp_val_Recll3), "F3": F3, 
-					"Acc4": np.mean(temp_val_Acc4), "Prec4": np.mean(temp_val_Prec4), "Recll4": np.mean(temp_val_Recll4), "F4": F4, 
+					"Acc1": Acc1, "Prec1": Prec1, "Recll1": Recll1, "F1": F1, 
+					"Acc2": Acc2, "Prec2": Prec2, "Recll2": Recll2, "F2": F2, 
+					"Acc3": Acc3, "Prec3": Prec3, "Recll3": Recll3, "F3": F3, 
+					"Acc4": Acc4, "Prec4": Prec4, "Recll4": Recll4, "F4": F4, 
 				}
 
 		fw.write("{:4d}\t{:.0E}\t{:.0E}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(
@@ -327,11 +372,12 @@ def main():
 	parser.add_argument("--weight_decay", default=0.0, type=float, help="the weight decay")
 	parser.add_argument("--learningRate", default=5e-5, type=float, help="the initial learning rate")
 	parser.add_argument("--learningRateGraph", default=1e-5, type=float, help="the inital learning rate for GNN")
-	parser.add_argument("--patience"   , default= 10, type=int, help="early stop patience")
-	parser.add_argument("--n_epochs"   , default= 10, type=int, help="fine tuning epoches")
-	parser.add_argument("--batchsize"  , default=256, type=int, help="batch size")
-	parser.add_argument("--multi_gpu"  , default=  0, type=int, help="number of GPUs")
-	parser.add_argument("--dropout_gat", default=0.5, type=float)
+	parser.add_argument("--patience"    , default= 10, type=int, help="early stop patience")
+	parser.add_argument("--n_epochs"    , default= 10, type=int, help="fine tuning epoches")
+	parser.add_argument("--batchsize"   , default=256, type=int, help="batch size")
+	parser.add_argument("--multi_gpu"   , default=  0, type=int, help="number of GPUs")
+	parser.add_argument("--dropout_gat" , default=0.5, type=float)
+	parser.add_argument("--max_tree_len", default=1000, type=int, help="maximum tree length, for less GPU memory during training")
 
 	#pick up the model to play with
 	parser.add_argument("--modelName", default=None, required=True, type=str, help="pick up the model to play with")

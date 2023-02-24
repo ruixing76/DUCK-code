@@ -65,12 +65,21 @@ class CommentTreeDataset(Dataset):
 		#data = np.load(os.path.join(self.data_path, id + ".npz"), allow_pickle=True)
 		#idx = int(id)
 		#str_idx = str(idx)
+
+		#input_ids    , attention_mask     = preprocessing_for_bert_latest(data["root"], data["nodecontent"]) #convert list of strings to list of input_ids and attention_mask for this idx
+		#input_ids_seq, attention_mask_seq = preprocessing_for_bert_seq(   data["root"], data["nodecontent"])
+
 		data = np.load("{}/{}.npz".format(self.graph_path, id), allow_pickle=True)
-		input_ids    , attention_mask     = preprocessing_for_bert_latest(data["root"], data["nodecontent"]) #convert list of strings to list of input_ids and attention_mask for this idx
-		input_ids_seq, attention_mask_seq = preprocessing_for_bert_seq(   data["root"], data["nodecontent"])
+
+		## Truncate number of responses for less GPU memory during training
+		nodecontent = data["nodecontent"][:self.args.max_tree_len]
+		edgematrix  = data["edgematrix"][:, data["edgematrix"][1] <= nodecontent.__len__()]
+
+		input_ids    , attention_mask     = preprocessing_for_bert_latest(data["root"], nodecontent) #convert list of strings to list of input_ids and attention_mask for this idx
+		input_ids_seq, attention_mask_seq = preprocessing_for_bert_seq(   data["root"], nodecontent)
 
 		return Data(
-			edge_index = torch.LongTensor(data["edgematrix"]),
+			edge_index = torch.LongTensor(edgematrix), #torch.LongTensor(data["edgematrix"]),
 			#root = torch.LongTensor(data["root"]),
 			y = torch.LongTensor([int(data["y"])]),
 			rootindex = torch.LongTensor([int(data["rootindex"])]),
@@ -81,7 +90,7 @@ class CommentTreeDataset(Dataset):
 			attention_mask_seq = torch.LongTensor(attention_mask_seq),
 			#top_index = torch.LongTensor(data["topindex"]),
 			#tri_index = torch.LongTensor(data["triIndex"])
-			num_nodes = data["root"].__len__() + data["nodecontent"].__len__() ## For ignoring torch_geometric warning
+			num_nodes = data["root"].__len__() + nodecontent.__len__() ## For ignoring torch_geometric warning
 		)
 
 def collate_fn(data):
