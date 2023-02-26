@@ -34,7 +34,7 @@ do
 
 	lr_bert=2e-5
 
-	for lr_gnn in 1e-4 2e-4 4e-4
+	for lr_gnn in 1e-4 2e-4 3e-4 4e-4
 	do
 		for dropout in 0.5 0.6
 		do
@@ -69,7 +69,8 @@ do
 					--learningRateGraph $lr_gnn \
 					--dropout_gat $dropout \
 					--n_epochs 20 \
-					--max_tree_len 40
+					--max_tree_len 40 \
+					--result_path ./result/CCCT
 			done
 		done
 	done

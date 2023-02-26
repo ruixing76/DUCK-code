@@ -128,7 +128,6 @@ class CCCTNet(nn.Module):
 
 	def forward(self, data):
 		## 2-tier transformer
-		## TODO: Add `[CLS]` token
 		bert_x = self.bert_seq(data)
 		bert_x, bert_x_mask = self.pad_and_reshape_batch(data, bert_x)
 		seq_x = self.bert_tt(data, bert_x, bert_x_mask)
