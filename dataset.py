@@ -86,8 +86,10 @@ class CommentTreeDataset(Dataset):
 			#idx = torch.LongTensor([int(idx)]),
 			input_ids = torch.LongTensor(input_ids),
 			attention_mask = torch.LongTensor(attention_mask),
-			input_ids_seq = torch.LongTensor(input_ids_seq),
-			attention_mask_seq = torch.LongTensor(attention_mask_seq),
+			#input_ids_seq = torch.LongTensor(input_ids_seq),
+			#attention_mask_seq = torch.LongTensor(attention_mask_seq),
+			input_ids_seq = torch.LongTensor(input_ids_seq.unsqueeze(dim=0)),
+			attention_mask_seq = torch.LongTensor(attention_mask_seq.unsqueeze(dim=0)),
 			#top_index = torch.LongTensor(data["topindex"]),
 			#tri_index = torch.LongTensor(data["triIndex"])
 			num_nodes = data["root"].__len__() + nodecontent.__len__() ## For ignoring torch_geometric warning

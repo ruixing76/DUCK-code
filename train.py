@@ -195,7 +195,6 @@ class DUCK:
 			batch_idx = 0
 			tqdm_train_loader = tqdm(train_loader, desc="Epoch: {}, Train".format(epoch))
 			for Batch_data in tqdm_train_loader:
-				#ipdb.set_trace()
 				Batch_data.to(device)
 				dataList = Batch_data.to_data_list()
 				#emb, out_labels = model(Batch_data)
