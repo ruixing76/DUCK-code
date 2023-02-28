@@ -115,7 +115,7 @@ python train.py \
 Detailed arguments can be found in `scripts/run.sh` & `scripts/run_ccct.sh`.
 
 ## publicaton
-This is the source code for [DUCK: Rumour Detection on Social Media by Modelling User and Comment Propagation Networks](https://aclanthology.org/2022.naacl-main.364/)
+This is the source code for [DUCK: Rumour Detection on Social Media by Modelling User and Comment Propagation Networks](https://aclanthology.org/2022.naacl-main.364/).
 
 
 If you find this code useful, please let us know and cite our paper.  
