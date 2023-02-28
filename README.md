@@ -40,7 +40,7 @@ All datasets are publicly accessible.
 [twarc](https://github.com/DocNow/twarc)
 
 ### Data preparation
-Since Twitter15 and Twitter16 datasets only provide the tweet IDs of the responses under each thread, you need to crawl the textual content of these responses via Twitter API. I use the dataset version of [yunzhusong/AARD](https://github.com/yunzhusong/AARD), where those content has already been crawled.
+Since Twitter15 and Twitter16 datasets only provide the tweet IDs of the responses under each thread, you need to crawl the textual content of these responses via Twitter API. I use the dataset version of [yunzhusong/AARD](https://github.com/yunzhusong/AARD) where those content has already been crawled.
 
 For training the model, you need to prepare several files in the following structure.
 ```
@@ -93,7 +93,7 @@ python train.py \
     --dropout_gat $dropout \
     --n_epochs 20 \
 ```
-Can adjust the argument `--max_tree_len` if GPU memory is not enough.
+Can adjust the argument `--max_tree_len` if your GPU memory is not enough.
 
 ### Train BERT+GAT with Comment Tree & Two-Tier Transformer with Comment Chain
 ```
@@ -114,7 +114,7 @@ python train.py \
 ```
 Detailed arguments can be found in `scripts/run.sh` & `scripts/run_ccct.sh`.
 
-## publicaton
+## Publicaton
 This is the source code for [DUCK: Rumour Detection on Social Media by Modelling User and Comment Propagation Networks](https://aclanthology.org/2022.naacl-main.364/).
 
 
