@@ -1,73 +1,69 @@
-## requirement packages
+This repository is forked from the official implementation of DUCK. Since the original project contains plenty of errors and unspecified parameters, I modify the code and further state the dataset preparation more clearly so that this project can be run.
 
-# Dependencies:  <br />
-python==3.7 <br />
-torch==1.9.0+cu102 <br />
-torchvision==0.10.0+cu102 <br />
-torch-scatter==2.0.8 <br />
-torch-sparse==0.6.11 <br />
-torch-geometric==1.7.2 <br />
-transformers==4.2.1 <br />
-sckikit-learn==0.21.3 <br />
-tqdm==4.62.0 <br />
-numpy==1.19.5 <br />
-pandas <br />
-matplotlib==2.2.3 <br />
-networkx==2.2 <br />
-scipy==1.2.0 <br />
-pyro-ppl==0.3.0 <br />
-networkx <br />
-pickle <br />
-<br />
+# Dependencies:
+- Python 3.8.10
+```
+$ pip install transformers==4.2.1
+$ pip install Cython
+$ pip install scikit-learn==0.21.3
+$ pip install networkx==3.0
+$ pip install pyro-ppl==0.3.0
+$ pip install numpy==1.24.2
+$ pip install pandas==1.4.4
+$ pip install matplotlib
+$ pip install ipdb
+```
+Install pytorch and pytorch-geometric as follows.
+```
+## Env: NVIDIA GeForce GTX 1080
+$ pip install torch==1.9.0+cu102 -f https://download.pytorch.org/whl/torch_stable.html
+$ pip install torch-scatter==2.0.8 -f https://data.pyg.org/whl/torch-1.9.0+cu102.html
+$ pip install torch-sparse==0.6.11 -f https://data.pyg.org/whl/torch-1.9.0+cu102.html
+$ pip install torch-geometric==2.2.0
 
-# required packages are in requirements.txt
-
-```bash
-pip install -r requirements.txt
+## Env: NVIDIA GeForce RTX 3090
+$ pip install torch==1.11.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
+$ pip install torch-scatter==2.0.9 -f https://data.pyg.org/whl/torch-1.11.0+cu113.html
+$ pip install torch-sparse==0.6.15 -f https://data.pyg.org/whl/torch-1.11.0+cu113.html
+$ pip install torch-geometric==2.2.0
 ```
 
-# running environment
+# Dataset
+All datasets are publicly accessible.
 
+[Twitter15](https://www.dropbox.com/s/7ewzdrbelpmrnxu/rumdetect2017.zip?dl=0 )
+[Twitter16](https://www.dropbox.com/s/7ewzdrbelpmrnxu/rumdetect2017.zip?dl=0 )
+[CoAID](https://github.com/cuilimeng/CoAID) version 0.4
+[WEIBO](https://alt.qcri.org/~wgao/data/rumdect.zip)
 
-## data
+## Data crawling tool
+[twarc](https://github.com/DocNow/twarc)
 
-All datasets are public accessible
+# Train the DUCK model
 
-[Twitter15](https://www.dropbox.com/s/7ewzdrbelpmrnxu/rumdetect2017.zip?dl=0 ) <br />
-[Twitter16] (https://www.dropbox.com/s/7ewzdrbelpmrnxu/rumdetect2017.zip?dl=0 ) <br />
-[CoAID] (https://github.com/cuilimeng/CoAID) version 0.4 <br />
-[WEIBO] (https://alt.qcri.org/~wgao/data/rumdect.zip) <br />
-
-# data crawling tool
-
-[twarc] (https://github.com/DocNow/twarc)
-
-
-## training the DUCK model
-
-```bash
+```
 python3 train.py --datasetName 'Twitter15' --baseDirectory './data' --mode 'DUCK' --modelName 'DUCK'
 ```
 
-# comment graph data
+## comment graph data
 
-```bash
+```
 python3 train.py --datasetName 'Twitter15' --baseDirectory './data' --mode 'CommentTree' --modelName 'Simple_GAT_BERT'
 ```
 
-# user graph data
+## user graph data
 
-```bash
+```
 python3 train.py --datasetName 'Twitter15' --baseDirectory './data' --mode 'UserTree' --modelName 'Simple_GAT_BERT'
 ```
 
-# run script
+## run script
 
 ```
 $ sh run.sh
 ```
 
-## publicaton
+# publicaton
 This is the source code for 
 [DUCK: Rumour Detection on Social Media by Modelling User and Comment Propagation Networks](https://aclanthology.org/2022.naacl-main.364/)
 
