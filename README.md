@@ -1,7 +1,7 @@
 # DUCK
 This repository is forked from the official implementation of DUCK. Since the original project contains plenty of errors and unspecified parameters, I modify the code and further state the dataset preparation more clearly so that this project can be run easier.
 
-If you have any questions, please contact me at joshchang0111.ee10@nycu.edu.tw .
+If you have any questions, please contact me at joshchang0111.ee10@nycu.edu.tw .  
 If you find this code useful, please feel free to let me know, thanks!
 
 ## Dependencies
