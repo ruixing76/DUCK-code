@@ -1,7 +1,10 @@
 # DUCK
-This repository is forked from the official implementation of DUCK. Since the original project contains plenty of errors and unspecified parameters, I modify the code and further state the dataset preparation more clearly so that this project can be run.
+This repository is forked from the official implementation of DUCK. Since the original project contains plenty of errors and unspecified parameters, I modify the code and further state the dataset preparation more clearly so that this project can be run easier.
 
-## Dependencies:
+If you have any questions, please contact me at joshchang0111.ee10@nycu.edu.tw .
+If you find this code useful, please feel free to let me know, thanks!
+
+## Dependencies
 - Python 3.8.10
 ```
 $ pip install transformers==4.2.1
@@ -14,7 +17,7 @@ $ pip install pandas==1.4.4
 $ pip install matplotlib
 $ pip install ipdb
 ```
-Install pytorch and pytorch-geometric as follows.
+Install **PyTorch** and **PyTorch Geometric** as follows.
 ```
 ## Env: NVIDIA GeForce GTX 1080
 $ pip install torch==1.9.0+cu102 -f https://download.pytorch.org/whl/torch_stable.html
@@ -40,7 +43,7 @@ All datasets are publicly accessible.
 [twarc](https://github.com/DocNow/twarc)
 
 ### Data preparation
-Since Twitter15 and Twitter16 datasets only provide the tweet IDs of the responses under each thread, you need to crawl the textual content of these responses via Twitter API. I use the dataset version of [yunzhusong/AARD](https://github.com/yunzhusong/AARD) where those content has already been crawled.
+Since Twitter15 and Twitter16 datasets only provide the tweet IDs of the responses under each thread, you need to crawl the textual content of these responses via Twitter API. For these two datasets, I use the version released by [yunzhusong/AARD](https://github.com/yunzhusong/AARD) where those content has already been crawled.
 
 For training the model, you need to prepare several files in the following structure.
 ```
