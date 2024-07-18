@@ -1,18 +1,21 @@
 #! /bin/bash
 
-if [ $(hostname) = "ED716" ]; then
-	export CUDA_VISIBLE_DEVICES=1
-	batch_size=2
-elif [ $(hostname) = "esc4000-g4" ]; then
-	export CUDA_VISIBLE_DEVICES=0
-	batch_size=2
-elif [ $(hostname) = "basic-1" ]; then
-	export CUDA_VISIBLE_DEVICES=0
-	batch_size=2
-elif [ $(hostname) = "basic-4" ]; then
-	export CUDA_VISIBLE_DEVICES=0
-	batch_size=4
-fi
+#if [ $(hostname) = "ED716" ]; then
+#	export CUDA_VISIBLE_DEVICES=1
+#	batch_size=2
+#elif [ $(hostname) = "esc4000-g4" ]; then
+#	export CUDA_VISIBLE_DEVICES=0
+#	batch_size=2
+#elif [ $(hostname) = "basic-1" ]; then
+#	export CUDA_VISIBLE_DEVICES=0
+#	batch_size=2
+#elif [ $(hostname) = "basic-4" ]; then
+#	export CUDA_VISIBLE_DEVICES=0
+#	batch_size=4
+#fi
+
+export CUDA_VISIBLE_DEVICES=0
+batch_size=4
 
 #Generate graph data for each dataset
 #python vgae_preprocessing.py DATASET
