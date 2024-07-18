@@ -1,0 +1,12 @@
+python train.py \
+    --datasetName $dataset \
+    --baseDirectory ./data \
+    --n_classes $n_classes \
+    --foldnum $fold \
+    --mode CommentTree \
+    --modelName Simple_GAT_BERT \
+    --batchsize $batch_size \
+    --learningRate $lr_bert \
+    --learningRateGraph $lr_gnn \
+    --dropout_gat $dropout \
+    --n_epochs 20 \
